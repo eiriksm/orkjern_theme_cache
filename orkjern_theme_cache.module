@@ -36,6 +36,6 @@ function orkjern_theme_cache_preprocess_html(&$vars) {
     }
   }
   if ($has_css) {
-    //$vars['has_css'] = TRUE;
+    $vars['has_css'] = TRUE;
   }
 }
