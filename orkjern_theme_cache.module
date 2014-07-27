@@ -1,0 +1,41 @@
+<?php
+
+function orkjern_theme_cache_cache_flush() {
+  // Abuse the config to set a new key for my cache.
+  $config = \Drupal::config('orkjern_theme.cache');
+  $config->set('css_cache', time());
+  $config->save();
+}
+
+function orkjern_theme_cache_preprocess_html(&$vars) {
+  // Check what the key is.
+  $config = \Drupal::config('orkjern_theme.cache');
+  $cache_key = $config->get('css_cache');
+
+  // Add cache key into template.
+  $vars['cache_key'] = $cache_key;
+
+  $has_css = FALSE;
+  // See if the reverse proxy has sent this into.
+  if (!empty($_GET['has_cache'])) {
+    if (!empty($_GET['cookie'])) {
+      // Strpos. Really?
+      if (strpos($_GET['cookie'], (string)$cache_key) > 1) {
+        // All good.
+        $has_css = TRUE;
+      }
+    }
+  }
+  if (!empty($_COOKIE) && !empty($_COOKIE['ORKJERN_THEME_CACHE'])) {
+    if ($_COOKIE['ORKJERN_THEME_CACHE'] == $cache_key) {
+      $has_css = TRUE;
+    }
+    else {
+      setcookie('ORKJERN_THEME_CACHE');
+      unset($_COOKIE);
+    }
+  }
+  if ($has_css) {
+    //$vars['has_css'] = TRUE;
+  }
+}
