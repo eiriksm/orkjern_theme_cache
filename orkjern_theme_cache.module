@@ -1,5 +1,15 @@
 <?php
 
+/**
+ * @file
+ * orkjern_theme_cache.module
+ *
+ * A drastic way of storing cache. Use on your own risk.
+ */
+
+/**
+ * Implements hook_cache_flush().
+ */
 function orkjern_theme_cache_cache_flush() {
   // Abuse the config to set a new key for my cache.
   $config = \Drupal::config('orkjern_theme.cache');
@@ -7,6 +17,9 @@ function orkjern_theme_cache_cache_flush() {
   $config->save();
 }
 
+/**
+ * Implements hook_preprocess_html().
+ */
 function orkjern_theme_cache_preprocess_html(&$vars) {
   // Check what the key is.
   $config = \Drupal::config('orkjern_theme.cache');
@@ -16,7 +29,7 @@ function orkjern_theme_cache_preprocess_html(&$vars) {
   $vars['cache_key'] = $cache_key;
 
   $has_css = FALSE;
-  // See if the reverse proxy has sent this into.
+  // See if the reverse proxy has used the cache key to append as GET param.
   if (!empty($_GET['has_cache'])) {
     if (!empty($_GET['cookie'])) {
       // Strpos. Really?
@@ -26,6 +39,7 @@ function orkjern_theme_cache_preprocess_html(&$vars) {
       }
     }
   }
+  // This will never be run when behind my varnish, but useful for development.
   if (!empty($_COOKIE) && !empty($_COOKIE['ORKJERN_THEME_CACHE'])) {
     if ($_COOKIE['ORKJERN_THEME_CACHE'] == $cache_key) {
       $has_css = TRUE;
@@ -36,6 +50,8 @@ function orkjern_theme_cache_preprocess_html(&$vars) {
     }
   }
   if ($has_css) {
+    // Comment out this to always get your css on each page load. Useful for
+    // development.
     $vars['has_css'] = TRUE;
   }
 }
