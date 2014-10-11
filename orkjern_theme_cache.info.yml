@@ -1,4 +1,9 @@
 name: Orkj theme cacher
 type: module
-description: 'A stupid idea of caching '
+description: 'A stupid idea of caching'
 core: 8.x
+
+dependencies:
+  - views
+  - rest
+  - hal
