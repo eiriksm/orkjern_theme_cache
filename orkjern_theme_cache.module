@@ -12,7 +12,7 @@
  */
 function orkjern_theme_cache_cache_flush() {
   // Abuse the config to set a new key for my cache.
-  $config = \Drupal::config('orkjern_theme.cache');
+  $config = \Drupal::configFactory()->getEditable('orkjern_theme.cache');
   $config->set('css_cache', time());
   $config->save();
 }
