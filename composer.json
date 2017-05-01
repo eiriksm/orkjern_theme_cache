@@ -1,0 +1,11 @@
+{
+    "name": "eiriksm/orkjern_theme_cache",
+    "type": "drupal-module",
+    "authors": [
+        {
+            "name": "Eirik S. Morland",
+            "email": "eirik@morland.no"
+        }
+    ],
+    "require": {}
+}
