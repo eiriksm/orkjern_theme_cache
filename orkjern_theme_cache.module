@@ -8,6 +8,7 @@
  */
 
 define('ORKJERN_THEME_CACHE_STATE_KEY', 'orkjern_cache.css_cache');
+define('ORKJERN_THEME_CACHE_COOKIE_KEY', 'ORKJERN_THEME_CACHE');
 
 /**
  * Implements hook_cache_flush().
@@ -38,12 +39,12 @@ function orkjern_theme_cache_preprocess_html(&$vars) {
     }
   }
   // This will never be run when behind my varnish, but useful for development.
-  if (!empty($_COOKIE) && !empty($_COOKIE['ORKJERN_THEME_CACHE'])) {
-    if ($_COOKIE['ORKJERN_THEME_CACHE'] == $cache_key) {
+  if (!empty($_COOKIE) && !empty($_COOKIE[ORKJERN_THEME_CACHE_COOKIE_KEY])) {
+    if ($_COOKIE[ORKJERN_THEME_CACHE_COOKIE_KEY] == $cache_key) {
       $has_css = TRUE;
     }
     else {
-      setcookie('ORKJERN_THEME_CACHE');
+      setcookie(ORKJERN_THEME_CACHE_COOKIE_KEY);
       unset($_COOKIE);
     }
   }
@@ -52,4 +53,5 @@ function orkjern_theme_cache_preprocess_html(&$vars) {
     // development.
     $vars['has_css'] = TRUE;
   }
+  $vars['#cache']['contexts'][] = 'cookies:' . ORKJERN_THEME_CACHE_COOKIE_KEY;
 }
