@@ -7,23 +7,21 @@
  * A drastic way of storing cache. Use on your own risk.
  */
 
+define('ORKJERN_THEME_CACHE_STATE_KEY', 'orkjern_cache.css_cache');
+
 /**
  * Implements hook_cache_flush().
  */
 function orkjern_theme_cache_cache_flush() {
-  // Abuse the config to set a new key for my cache.
-  $config = \Drupal::configFactory()->getEditable('orkjern_theme.cache');
-  $config->set('css_cache', time());
-  $config->save();
+  \Drupal::state()->set(ORKJERN_THEME_CACHE_STATE_KEY, time());
 }
 
 /**
- * Implements hook_preprocess_html().
+ * Implements hook_preprocess_HOOK().
  */
 function orkjern_theme_cache_preprocess_html(&$vars) {
   // Check what the key is.
-  $config = \Drupal::config('orkjern_theme.cache');
-  $cache_key = $config->get('css_cache');
+  $cache_key = \Drupal::state()->get(ORKJERN_THEME_CACHE_STATE_KEY);
 
   // Add cache key into template.
   $vars['cache_key'] = $cache_key;
@@ -33,7 +31,7 @@ function orkjern_theme_cache_preprocess_html(&$vars) {
   if (!empty($_GET['has_cache'])) {
     if (!empty($_GET['cookie'])) {
       // Strpos. Really?
-      if (strpos($_GET['cookie'], (string)$cache_key) > 1) {
+      if (strpos($_GET['cookie'], (string) $cache_key) > 1) {
         // All good.
         $has_css = TRUE;
       }
